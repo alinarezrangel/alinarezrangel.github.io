@@ -5,9 +5,27 @@
 		<title>Generation - The CSS Based framework</title>
 		<link href="css/generation.css" rel="stylesheet"/>
 		<link href="css/pallete_basics.css" rel="stylesheet"/>
+		<link href="css/pallete_natural.css" rel="stylesheet"/>
 		<script src="js/generation.js"></script>
 	</head>
 	<body>
+<!--
+***************************************
+   Copyright 2016 Alejandro Linarez Rangel
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+***************************************
+-->
 		<header class="container color-black">
 			<div class="flexible center">
 				<h1>Generation 1</h1>
@@ -97,6 +115,46 @@
 					<button type="button" class="button color-tree">tree</button>
 					<button type="button" class="button color-rusticred">rusticred</button>
 					<button type="button" class="button color-earth">earth</button>
+				</div>
+				<h4>Colors (color pallete natural)</h4>
+				<div class="button-group wrap">
+					<button type="button" class="button color-natural-red">red</button>
+					<button type="button" class="button color-natural-deepred">deepred</button>
+					<button type="button" class="button color-natural-ember">ember</button>
+					<button type="button" class="button color-natural-darkred">darkred</button>
+					<button type="button" class="button color-natural-blue">blue</button>
+					<button type="button" class="button color-natural-deepblue">deepblue</button>
+					<button type="button" class="button color-natural-indigo">indigo</button>
+					<button type="button" class="button color-natural-darkblue">darkblue</button>
+					<button type="button" class="button color-natural-green">green</button>
+					<button type="button" class="button color-natural-deepgreen">deepgreen</button>
+					<button type="button" class="button color-natural-teal">teal</button>
+					<button type="button" class="button color-natural-darkgreen">darkgreen</button>
+					<button type="button" class="button color-natural-yellow">yellow</button>
+					<button type="button" class="button color-natural-magenta">magenta</button>
+					<button type="button" class="button color-natural-cyan">cyan</button>
+					<button type="button" class="button color-natural-pink">pink</button>
+					<button type="button" class="button color-natural-purple">purple</button>
+					<button type="button" class="button color-natural-grey">grey</button>
+					<button type="button" class="button color-natural-bluegrey">bluegrey</button>
+					<button type="button" class="button color-natural-redgrey">redgrey</button>
+					<button type="button" class="button color-natural-greengrey">greengrey</button>
+					<button type="button" class="button color-natural-middlegrey">middlegrey</button>
+					<button type="button" class="button color-natural-orange">orange</button>
+					<button type="button" class="button color-natural-brown">brown</button>
+					<button type="button" class="button color-natural-deeporange">deeporange</button>
+					<button type="button" class="button color-natural-deepbrown">deepbrown</button>
+					<button type="button" class="button color-natural-white">white</button>
+					<button type="button" class="button color-natural-black">black</button>
+					<button type="button" class="button color-natural-accent">accent</button>
+					<button type="button" class="button color-natural-outset">outset</button>
+				</div>
+				<h4>Flat buttons</h4>
+				<div class="button-group wrap">
+					<button type="button" class="flat-button">This</button>
+					<button type="button" class="flat-button">is</button>
+					<button type="button" class="flat-button">a</button>
+					<button type="button" class="flat-button">flat button</button>
 				</div>
 			</section>
 			<section class="section border">
@@ -257,11 +315,41 @@
 				<div class="card">
 					A card!
 				</div>
-				<div class="card">
-					A card!
+				<div class="card sw-1 margin-32">
+					A card! (sw-1)
 				</div>
-				<div class="card">
-					A card!
+				<div class="card sw-2 margin-32">
+					A card! (sw-2)
+				</div>
+				<div class="card sw-3 margin-32">
+					A card! (sw-3)
+				</div>
+				<div class="card sw-4 margin-32">
+					A card! (sw-4)
+				</div>
+				<div class="card sw-5 margin-32">
+					A card! (sw-5)
+				</div>
+				<div class="card sw-6 margin-32">
+					A card! (sw-6)
+				</div>
+				<div class="card sw-7 margin-32">
+					A card! (sw-7)
+				</div>
+				<div class="card sw-8 margin-32">
+					A card! (sw-8)
+				</div>
+				<div class="card sw-9 margin-32">
+					A card! (sw-9)
+				</div>
+				<div class="card sw-10 margin-32">
+					A card! (sw-10)
+				</div>
+				<div class="card sw-11 margin-32">
+					A card! (sw-11)
+				</div>
+				<div class="card sw-12 margin-32">
+					A card! (sw-12)
 				</div>
 			</section>
 			<section class="section border">
@@ -306,6 +394,29 @@
 							C
 						</div>
 					</div>
+				</div>
+			</section>
+			<section class="section border">
+				<header class="container color-grey">
+					<h3>Response Classes</h3>
+				</header>
+				<div class="container margin-8 color-red hide-on-small hide-on-medium">
+					This is visible only in large screens (hide-on-small + hide-on-medium)
+				</div>
+				<div class="container margin-8 color-green hide-on-small hide-on-large">
+					This is visible only in medium screens (hide-on-small + hide-on-large)
+				</div>
+				<div class="container margin-8 color-blue hide-on-medium hide-on-large">
+					This is visible only in small screens (hide-on-medium + hide-on-large)
+				</div>
+				<div class="container margin-8 color-red hide-on-small">
+					This is visible when the screen is not small.
+				</div>
+				<div class="container margin-8 color-green hide-on-medium">
+					This is visible when the screen is not medium.
+				</div>
+				<div class="container margin-8 color-blue hide-on-large">
+					This is visible when the screen is not large.
 				</div>
 			</section>
 			<section class="section border">
@@ -409,6 +520,8 @@
 					<li>data-close-modal="<i>id</i>": When click this element, close the modal with ID</li>
 				</ul>
 			</section>
+
+			<button class="button color-grey">hola</button>
 		</main>
 		<footer class="fcontainer center color-black">
 			<p>
