@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="generator" content="pandoc" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+                                        <title>make</title>
+        <style>
+         code{white-space: pre-wrap;}
+         span.smallcaps{font-variant: small-caps;}
+         span.underline{text-decoration: underline;}
+         div.column{display: inline-block; vertical-align: top; width: 50%;}
+         div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+         ul.task-list{list-style: none;}
+         pre > code.sourceCode { white-space: pre; position: relative; }
+         pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+         pre > code.sourceCode > span:empty { height: 1.2em; }
+         code.sourceCode > span { color: inherit; text-decoration: inherit; }
+         div.sourceCode { margin: 1em 0; }
+         pre.sourceCode { margin: 0; }
+         @media screen {
+         div.sourceCode { overflow: auto; }
+         }
+         @media print {
+         pre > code.sourceCode { white-space: pre-wrap; }
+         pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+         }
+         pre.numberSource code
+           { counter-reset: source-line 0; }
+         pre.numberSource code > span
+           { position: relative; left: -4em; counter-increment: source-line; }
+         pre.numberSource code > span > a:first-child::before
+           { content: counter(source-line);
+             position: relative; left: -1em; text-align: right; vertical-align: baseline;
+             border: none; display: inline-block;
+             -webkit-touch-callout: none; -webkit-user-select: none;
+             -khtml-user-select: none; -moz-user-select: none;
+             -ms-user-select: none; user-select: none;
+             padding: 0 4px; width: 4em;
+             color: #aaaaaa;
+           }
+         pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+         div.sourceCode
+           {   }
+         @media screen {
+         pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+         }
+         code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+         code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+         code span.at { color: #7d9029; } /* Attribute */
+         code span.bn { color: #40a070; } /* BaseN */
+         code span.bu { } /* BuiltIn */
+         code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+         code span.ch { color: #4070a0; } /* Char */
+         code span.cn { color: #880000; } /* Constant */
+         code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+         code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+         code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+         code span.dt { color: #902000; } /* DataType */
+         code span.dv { color: #40a070; } /* DecVal */
+         code span.er { color: #ff0000; font-weight: bold; } /* Error */
+         code span.ex { } /* Extension */
+         code span.fl { color: #40a070; } /* Float */
+         code span.fu { color: #06287e; } /* Function */
+         code span.im { } /* Import */
+         code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+         code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+         code span.op { color: #666666; } /* Operator */
+         code span.ot { color: #007020; } /* Other */
+         code span.pp { color: #bc7a00; } /* Preprocessor */
+         code span.sc { color: #4070a0; } /* SpecialChar */
+         code span.ss { color: #bb6688; } /* SpecialString */
+         code span.st { color: #4070a0; } /* String */
+         code span.va { color: #19177c; } /* Variable */
+         code span.vs { color: #4070a0; } /* VerbatimString */
+         code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+         .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+        </style>
+                <link rel="stylesheet" href="mkmain.css" />
+                                <!--[if lt IE 9]>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+                        <nav class="navbar">
+            <ul class="mainnav">
+                <li>Pages:</li>
+                <li><a href="index.html">Index</a></li>
+                <li><a href="install.html">Install</a></li>
+                <li><a href="https://github.com/alinarezrangel/build/releases">Releases</a></li>
+                <li><a href="README.html">Documentation</a></li>
+                <li><a href="https://github.com/alinarezrangel/build/issues">Bug Tracker</a></li>
+                <li><a href="https://github.com/alinarezrangel/build">GitHub</a></li>
+                <li><a href="https://github.com/alinarezrangel/build/blob/master/LICENSE">License</a></li>
+            </ul>
+                                </nav>
+                        <nav id="TOC" role="doc-toc" class="toc">
+                        <h2 class="toc-title" id="toc-title">Table of contents</h2>
+                        <ul>
+                        <li><a href="#build.make-the-make-like-clone-of-build.lua"><code>build.make</code> – The make-like clone of <code>build.lua</code></a>
+                        <ul>
+                        <li><a href="#basic-usage">Basic usage</a></li>
+                        <li><a href="#makefiles">Makefiles</a>
+                        <ul>
+                        <li><a href="#comments">Comments</a></li>
+                        <li><a href="#variables">Variables</a></li>
+                        <li><a href="#rules">Rules</a></li>
+                        <li><a href="#recipes">Recipes</a></li>
+                        <li><a href="#recipe-auto-escaping">Recipe auto-escaping</a></li>
+                        <li><a href="#words">Words</a></li>
+                        <li><a href="#special-variables">Special variables</a></li>
+                        <li><a href="#phony-targets">Phony targets</a></li>
+                        </ul></li>
+                        <li><a href="#command-line-usage">Command line usage</a></li>
+                        </ul></li>
+                        </ul>
+        </nav>
+                        <main class="main-content">
+<h1 id="build.make-the-make-like-clone-of-build.lua"><code>build.make</code> – The make-like clone of <code>build.lua</code></h1>
+<p>The <code>build.lua</code> library comes with a clone of the classic <code>make</code> program called <code>build.make</code>. This program implements a <code>make</code>-like <a href="https://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> that is mostly compatible with a subset of <code>make</code>.</p>
+<h2 id="basic-usage">Basic usage</h2>
+<p>The basic usage is the same than <code>make</code>: just run <code>build.make</code> in a directory that has a <code>Makefile</code>, <code>makefile</code>, <code>BUILDmakefile</code> or <code>BuildMakefile</code> file and it will automatically build your program.</p>
+<p>For example: imagine the following <code>Makefile</code>:</p>
+<pre class="make"><code>a.o: a.c
+    cc -c a.c -o a.o
+
+b.o: b.c
+    cc -c b.c -o b.o
+
+exe: a.o b.o
+    cc a.o b.o -o exe</code></pre>
+<p>And the following files:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a.c</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">extern</span> <span class="dt">void</span> foo(<span class="dt">int</span>);</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    foo(<span class="dv">1</span>);</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">// b.c</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> foo(<span class="dt">int</span> x)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    printf(<span class="st">&quot;&gt;%d</span><span class="sc">\n</span><span class="st">&quot;</span>, x);</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Then running <code>build.make exe</code> will perform the necessary actions to get the file <code>exe</code> up to date. Try modifying only one of <code>a.c</code> or <code>b.c</code> and see how it only builds the modified files.</p>
+<p>And so, the simplest usages of <code>build.make</code> are:</p>
+<ul>
+<li><code>build.make TARGET1 TARGET2 ...</code>: Builds <code>TARGET1</code>, <code>TARGET2</code>, etc.</li>
+<li><code>build.make</code> (no arguments): Builds the <code>all</code> target.</li>
+</ul>
+<h2 id="makefiles">Makefiles</h2>
+<p><code>build.make</code> will try to read any of the following files (in the given order):</p>
+<ul>
+<li><code>BUILDmakefile</code></li>
+<li><code>BuildMakefile</code></li>
+<li><code>makefile</code></li>
+<li><code>Makefile</code></li>
+</ul>
+<p>The <code>BUILDmakefile</code> and <code>BuildMakefile</code> are meant to be used only when your makefile is making use of <code>build.make</code>-specific features. Unlike the relationship between <a href="https://www.gnu.org/software/make/">GNU Make</a> and other makes (see <a href="https://www.freebsd.org/cgi/man.cgi?query=make&amp;sektion=1&amp;apropos=0&amp;manpath=FreeBSD+13.1-RELEASE+and+Ports">FreeBSD’s make</a>, POSIX make, SVR4 make, etc), <code>build.make</code> does not attempt to replicate the standards make language, but instead only take it as a widely-known base in which to build upon. Features which would be too difficult to implement in it’s current architecture or “features” which are extremely difficult to use are left unimplemented.</p>
+<p>The syntax implemented from make consists of the following:</p>
+<h3 id="comments">Comments</h3>
+<p>Any unquoted <code>#</code> will start a comment that lasts until the end of the line. If the line ends with an odd number of backslashes <code>\</code> then the comment is extended to the next line and so on.</p>
+<h3 id="variables">Variables</h3>
+<p>Any of the following forms:</p>
+<pre><code>VAR = ...
+VAR := ...
+VAR ::= ...
+VAR ?= ...</code></pre>
+<p>Will declare a variable <code>VAR</code> with a value of <code>...</code>, where <code>...</code> can be any number of “words” (defined below). Variables can be named almost anything, except names containing whitespace and/or the characters <code>:</code>, <code>=</code>, <code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code> or <code>#</code>.</p>
+<p>These have the same behaviour than their counterparts in <a href="https://www.gnu.org/software/make/">GNU Make</a>. Specifically:</p>
+<ul>
+<li><code>VAR =</code> will set a variable. The variable’s value is expanded lazily (that is, it acts more like a macro than a variable in most other programming languages).</li>
+<li><code>VAR :=</code> and <code>VAR ::=</code> set a variable but expand it’s content right away. This assigment basically has the same semantics than the normal assigment <code>=</code> in other programming languages.</li>
+<li><code>VAR ?=</code> will set <code>VAR</code> only if not already set.</li>
+</ul>
+<p>After defining a variable you can refer to it with the syntax <code>$(VAR)</code>. If the name of the variable is a single character then you can also use <code>$VAR</code>. For example, <code>$(CC)</code> refers to the variable <code>CC</code> while <code>$&lt;</code> refers to the variable <code>&lt;</code>.</p>
+<h3 id="rules">Rules</h3>
+<p>A rule indicates <em>when</em> to build a <em>target</em> (that is, a file that you want to build automatically). Rules look like this:</p>
+<pre><code>TARGET: DEPENDENCIES...</code></pre>
+<p>Where <code>TARGET</code> is a “word” and <code>DEPENDENCIES</code> are zero or more “words”. What this rule means is that <code>TARGET</code> should be rebuilt when any of the <code>DEPENDENCIES</code> changes. For example: the rule <code>a.o: a.c</code> from the previous example says that <code>a.o</code> will be rebuilt once <code>a.c</code> changes; the rule <code>lib.so: a.o b.o c.o</code> says that the file <code>lib.so</code> will be rebuilt if any of <code>a.o</code>, <code>b.c</code> or <code>c.o</code> changes and finally the rule <code>example.txt:</code> says that <code>example.txt</code> will be rebuilt when possible (as it has no dependencies it is considered permanently “out-of-date”/“to-be-rebuilt”).</p>
+<h3 id="recipes">Recipes</h3>
+<p>Recipes indicate <em>how</em> a target will be rebuilt. All lines after a rule that start with at least one space or tab are considered it’s recipe.</p>
+<p><strong>NOTE</strong>: Unlike other makes out there, <strong>spaces can be used instead of tabs as indentation</strong>.</p>
+<p>For example:</p>
+<pre class="make"><code>release.zip: README.md main.lua
+    zip release.zip README.md main.lua
+
+game: release.zip
+    cat `whereis love` release.zip &gt; game
+    chmod +x game</code></pre>
+<p>The indented lines after the rules are the recipes, indicating that to rebuild <code>release.zip</code> one must run <code>zip release.zip README.md main.lua</code> and to rebuild <code>game</code> one must run <code>cat</code>whereis love<code>release.zip &gt; game</code> and <code>chmod +x game</code>.</p>
+<p>For each line of the recipe <code>build.make</code> will invoke the <code>sh</code>(1) shell with said line. If any of the commands exists with a non-zero exit code then the whole recipe is cancelled. For example, when running the <code>game</code> recipe it will first run the equivalent of:</p>
+<pre><code>sh -c &#39;cat `whereis love` release.zip &gt; game&#39; &amp;&amp; sh -c &#39;chmod +x game&#39;</code></pre>
+<p>Because each line has it’s own subshell, this means that shell variables from one line will not be visible on the next.</p>
+<p>You can change the shell being used with the special <code>.SHELL</code> rule:</p>
+<pre class="make"><code>.SHELL: python3 -c   # I prefer python...
+
+date.txt:
+    import datetime; print(datetime.date.today())</code></pre>
+<p>The first dependency of the <code>.SHELL</code> rule will be treated as the program to run, while all remamining ones will be used as additional arguments.</p>
+<h3 id="recipe-auto-escaping">Recipe auto-escaping</h3>
+<p>One critical difference between <code>build.make</code> and other makes is that <code>build.make</code> will automatically escape variable references in recipes. For example:</p>
+<pre class="make"><code>FILES = *.c
+
+example:
+    echo $(FILES)</code></pre>
+<p>When building <code>example</code>, the echo will actually print <code>*.c</code> rather than all the files that end in <code>.c</code>. This is because other makes work more like a macro templating system while <code>build.make</code> will escape the variables when interpolating using the <a href="https://manpages.debian.org/buster/libstring-shellquote-perl/shell-quote.1p.en.html"><code>shell-quote</code>(1p)</a> program.</p>
+<h3 id="words">Words</h3>
+<p>The autoescaping feature requires me to specify where and how does <code>build.make</code> insert spaces between a variable’s elements. It does this by separating a variable in words. Each word is escaped as a separate shell argument. Like the the <code>sh</code>(1) language, you can concatenate several forms in a single word by leaving no whitespace between them. You can use double-quoted strings, bare words, make escapes (<code>$$</code> to escape a <code>$</code>) and backslash escapes. For example, <code>hola" "mundo que$$"("TAL")"</code> contains 2 words, <code>hola mundo</code> and <code>que$(TAL)</code>.</p>
+<h3 id="special-variables">Special variables</h3>
+<p>The following variables are special: they are automatically defined before executing each recipe.</p>
+<ul>
+<li><code>$@</code>: The target being built.</li>
+<li><code>$&lt;</code>: The name of the first prerequisite (the first dependency).</li>
+<li><code>$^</code>: The names of all prerequisites (all dependencies). Duplicate values are removed.</li>
+<li><code>$+</code>: The names of all prerequisites (all dependencies). Duplicate values are left as-is.</li>
+<li><code>$|</code>: Empty. Reserved for future purposes.</li>
+</ul>
+<h3 id="phony-targets">Phony targets</h3>
+<p>The special <code>.PHONY</code> rule marks several other rules are “phony”: they are always considered out of date even if a suitable file exists. For example:</p>
+<pre class="make"><code>.PHONY: all test run
+all:
+    ...
+
+test:
+    ...
+
+run:
+    ...</code></pre>
+<p>Will always run the <code>all</code>, <code>test</code> and <code>run</code> targets even if up to date <code>all</code>, <code>test</code> and <code>run</code> files already exist.</p>
+<h2 id="command-line-usage">Command line usage</h2>
+<p>See <code>build.make -h</code> for a listing of all command line options and what they do.</p>
+        </main>
+        <footer class="footer">
+            <ul>
+                <li><a href="index.html">Go back to the index</a></li>
+                <li><a href="README.html">Documentation</a></li>
+                <li><a href="install.html">Install</a></li>
+                <li><a href="https://github.com/alinarezrangel/build/releases">Releases</a></li>
+                <li><a href="https://github.com/alinarezrangel/build/issues">Bug Tracker</a></li>
+                <li><a href="https://github.com/alinarezrangel/build">GitHub</a></li>
+                <li><a href="https://github.com/alinarezrangel/build/blob/master/LICENSE">License</a></li>
+            </ul>
+            <ul>
+                <li><a href="make.html"><code>build.make</code></a></li>
+                <li><a href="#" class="todo-link"><code>build.ninja</code></a></li>
+                <li><a href="#" class="todo-link"><code>build.redo</code></a></li>
+            </ul>
+            <ul>
+                <li><a href="#" class="todo-link"><code>build.schedulers</code></a></li>
+                <li><a href="#" class="todo-link"><code>build.rebuilders</code></a></li>
+                <li><a href="#" class="todo-link"><code>build.hashers</code></a></li>
+                <li><a href="#" class="todo-link"><code>build.traces.verifying</code></a></li>
+                <li><a href="#" class="todo-link"><code>build.stores</code></a></li>
+            </ul>
+        </footer>
+            </body>
+</html>
