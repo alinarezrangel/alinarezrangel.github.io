@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="generator" content="pandoc" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-                                        <title>build.rebuilders.verifying-traces</title>
+                                        <title>build.schedulers.suspending</title>
         <style>
          code{white-space: pre-wrap;}
          span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@
     </head>
     <body>
                         <header id="title-block-header">
-            <h1 class="title">build.rebuilders.verifying-traces</h1>
+            <h1 class="title">build.schedulers.suspending</h1>
                                                         </header>
                 <nav class="navbar">
             <ul class="mainnav">
@@ -108,7 +108,7 @@
                         <nav id="TOC" role="doc-toc" class="toc">
                         <h2 class="toc-title" id="toc-title">Table of contents</h2>
                         <ul>
-                        <li><a href="#build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></a>
+                        <li><a href="#build.schedulers.suspending"><code>build.schedulers.suspending</code></a>
                         <ul>
                         <li><a href="#usage">Usage</a></li>
                         <li><a href="#see-also">See Also</a></li>
@@ -116,27 +116,17 @@
                         </ul>
         </nav>
                         <main class="main-content">
-<h1 id="build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></h1>
-<dl>
-<dt><strong>Special meaning of keys?</strong></dt>
-<dd>No.
-</dd>
-<dt><strong>Requires an specific scheduler?</strong></dt>
-<dd>No.
-</dd>
-</dl>
-<p>A verifying-traces rebuilder. A verifying trace contains a <em>hash</em> gotten by a <em>hash function</em> from a key, it’s value and it’s dependencies hashes. Depending on the hash function this rebuilder will have different criteria for the caching.</p>
+<h1 id="build.schedulers.suspending"><code>build.schedulers.suspending</code></h1>
+<p>The simplest scheduler. It tries to build it’s target, suspending it’s execution when a new dependency is discovered. Once that dependency is done, execution of the original task resumes.</p>
+<p>As a way to prevent infinite loops, this scheduler also keeps a dirty bit for the duration of a single call to it’s build function. This means that even if the rebuilder marks an already built key as outdated, this scheduler will <strong>not</strong> rebuild it.</p>
 <h2 id="usage">Usage</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">R</span>ebuilder <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.rebuilders.verifying-traces&quot;</span> <span class="op">(</span><span class="cn">V</span>erifying_Trace_Store<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">S</span>uspending <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.schedulers.suspending&quot;</span> <span class="op">(</span><span class="cn">S</span>tore<span class="op">)</span></span></code></pre></div>
 <ul>
-<li><code>Verifying_Trace_Store</code> is the structure of the verifying traces store to use.</li>
+<li><code>Store</code> is the structure of the backing store of the scheduler.</li>
 </ul>
-<p>The <code>Rebuilder.create(vt)</code> function (for a given instance of the <code>Verifying_Trace_Store</code> <code>vt</code>) will create and return the new rebuilder.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="rebuilders-mtime.html"><code>build.rebuilders.mtime</code></a>.</li>
-<li><a href="rebuilders-dirty-bit.html"><code>build.rebuilders.dirty_bit</code></a>.</li>
-<li><a href="rebuilders-phony-adapter.html"><code>build.rebuilders.phony-adapter</code></a>.</li>
+<li><a href="schedulers-topological.html"><code>build.schedulers.topological</code></a>.</li>
 </ul>
         </main>
         <footer class="footer">

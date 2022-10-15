@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="generator" content="pandoc" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-                                        <title>build.rebuilders.verifying-traces</title>
+                                        <title>build.schedulers.topological</title>
         <style>
          code{white-space: pre-wrap;}
          span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@
     </head>
     <body>
                         <header id="title-block-header">
-            <h1 class="title">build.rebuilders.verifying-traces</h1>
+            <h1 class="title">build.schedulers.topological</h1>
                                                         </header>
                 <nav class="navbar">
             <ul class="mainnav">
@@ -108,7 +108,7 @@
                         <nav id="TOC" role="doc-toc" class="toc">
                         <h2 class="toc-title" id="toc-title">Table of contents</h2>
                         <ul>
-                        <li><a href="#build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></a>
+                        <li><a href="#build.schedulers.topological"><code>build.schedulers.topological</code></a>
                         <ul>
                         <li><a href="#usage">Usage</a></li>
                         <li><a href="#see-also">See Also</a></li>
@@ -116,27 +116,26 @@
                         </ul>
         </nav>
                         <main class="main-content">
-<h1 id="build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></h1>
-<dl>
-<dt><strong>Special meaning of keys?</strong></dt>
-<dd>No.
-</dd>
-<dt><strong>Requires an specific scheduler?</strong></dt>
-<dd>No.
-</dd>
-</dl>
-<p>A verifying-traces rebuilder. A verifying trace contains a <em>hash</em> gotten by a <em>hash function</em> from a key, it’s value and it’s dependencies hashes. Depending on the hash function this rebuilder will have different criteria for the caching.</p>
+<h1 id="build.schedulers.topological"><code>build.schedulers.topological</code></h1>
+<p>A <em>topological</em> scheduler. Orders all required keys in the store <em>topologically</em> and builds them in order. Because of the guarantee that dependency information is accurate, this linear scan will always build dependencies of a key before the key itself.</p>
+<p>While conceptually the simplest, this happens to be quite complex to implement in Lua due to the architecture of the program. In the original Haskell program, the static restrictions of the <code>Applicative</code> typeclass make it so that for any given set of tasks the build system can always infer all the dependencies of a given key. Sadly (or happily, depending on your point of view), Lua has no type system. Because of this the user of this scheduler must provide dependency information manually and unlike in the Haskell program there is no check that it is accurate.</p>
+<p>(Like in make or ninja, inaccurate dependency information will manifest itself in unpredictable build and misterious errors.)</p>
 <h2 id="usage">Usage</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">R</span>ebuilder <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.rebuilders.verifying-traces&quot;</span> <span class="op">(</span><span class="cn">V</span>erifying_Trace_Store<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">T</span>opological <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.schedulers.topological&quot;</span> <span class="op">(</span><span class="cn">S</span>tore<span class="op">)</span></span></code></pre></div>
 <ul>
-<li><code>Verifying_Trace_Store</code> is the structure of the verifying traces store to use.</li>
+<li><code>Store</code> is the structure of the backing store of the scheduler.</li>
 </ul>
-<p>The <code>Rebuilder.create(vt)</code> function (for a given instance of the <code>Verifying_Trace_Store</code> <code>vt</code>) will create and return the new rebuilder.</p>
+<p>While the API is the same than <a href="schedulers-suspending.html"><code>build.schedulers.suspending</code></a>, trying to use it like another scheduler will quickly result in a “The topological scheduler only supports topological tasks (created with the <code>topological_tasks()</code> function)” error. This is because this scheduler does not accept any function as its tasks function, but instead only accepts value produced by the <code>Topological.topological_tasks(tasks, dependencies)</code>. This function takes your normal <code>tasks</code> function but also a <code>dependencies</code> table. Said table keys must be the keys of the store and its values must be a sequential table (an array) of the keys in which this one depends.</p>
+<p>For example, to say that the key <code>"A"</code> depends on <code>"B"</code> and <code>"C"</code>, while key <code>"B"</code> depends on <code>"C"</code>, the following table would be used:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> dependencies <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span><span class="st">&quot;A&quot;</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="st">&quot;C&quot;</span><span class="op">},</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span><span class="st">&quot;B&quot;</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="st">&quot;C&quot;</span><span class="op">},</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Keys which are not found are assumed to have no dependencies.</p>
+<p>As an additional thing of this scheduler, its <code>task</code> function also has methods: <code>task(fetch)</code> will build the given task like in all other schedulers but <code>task:get_dependecies()</code> will return the sequential table (array) with all the dependencies of that task. This is extremely useful when writting rebuilders that require dependency information.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="rebuilders-mtime.html"><code>build.rebuilders.mtime</code></a>.</li>
-<li><a href="rebuilders-dirty-bit.html"><code>build.rebuilders.dirty_bit</code></a>.</li>
-<li><a href="rebuilders-phony-adapter.html"><code>build.rebuilders.phony-adapter</code></a>.</li>
+<li><a href="schedulers-suspending.html"><code>build.schedulers.suspending</code></a>.</li>
 </ul>
         </main>
         <footer class="footer">

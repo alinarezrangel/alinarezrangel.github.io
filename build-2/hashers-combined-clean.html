@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="generator" content="pandoc" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-                                        <title>build.rebuilders.verifying-traces</title>
+                                        <title>build.hashers.combined-clean</title>
         <style>
          code{white-space: pre-wrap;}
          span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@
     </head>
     <body>
                         <header id="title-block-header">
-            <h1 class="title">build.rebuilders.verifying-traces</h1>
+            <h1 class="title">build.hashers.combined-clean</h1>
                                                         </header>
                 <nav class="navbar">
             <ul class="mainnav">
@@ -108,35 +108,46 @@
                         <nav id="TOC" role="doc-toc" class="toc">
                         <h2 class="toc-title" id="toc-title">Table of contents</h2>
                         <ul>
-                        <li><a href="#build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></a>
+                        <li><a href="#build.hashers.combined-clean"><code>build.hashers.combined-clean</code></a>
                         <ul>
                         <li><a href="#usage">Usage</a></li>
+                        <li><a href="#example">Example</a></li>
                         <li><a href="#see-also">See Also</a></li>
                         </ul></li>
                         </ul>
         </nav>
                         <main class="main-content">
-<h1 id="build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></h1>
+<h1 id="build.hashers.combined-clean"><code>build.hashers.combined-clean</code></h1>
 <dl>
 <dt><strong>Special meaning of keys?</strong></dt>
-<dd>No.
-</dd>
-<dt><strong>Requires an specific scheduler?</strong></dt>
-<dd>No.
+<dd>No, they are passed as-is to the combined hashers.
 </dd>
 </dl>
-<p>A verifying-traces rebuilder. A verifying trace contains a <em>hash</em> gotten by a <em>hash function</em> from a key, it’s value and it’s dependencies hashes. Depending on the hash function this rebuilder will have different criteria for the caching.</p>
+<p>A <em>combined</em> hasher. Accepts several hashers as its inputs and marks a key as dirty only <strong>all</strong> of the hashers agree that it is dirty. Basically it is an <code>and</code> for hashers.</p>
 <h2 id="usage">Usage</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">R</span>ebuilder <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.rebuilders.verifying-traces&quot;</span> <span class="op">(</span><span class="cn">V</span>erifying_Trace_Store<span class="op">)</span></span></code></pre></div>
-<ul>
-<li><code>Verifying_Trace_Store</code> is the structure of the verifying traces store to use.</li>
-</ul>
-<p>The <code>Rebuilder.create(vt)</code> function (for a given instance of the <code>Verifying_Trace_Store</code> <code>vt</code>) will create and return the new rebuilder.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">COMBINED_CLEAN</span> <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.combined-clean&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">H</span>asher <span class="op">=</span> COMBINED_CLEAN <span class="op">(...)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> hasher <span class="op">=</span> <span class="cn">H</span>asher<span class="op">.</span>create_combined_hashers<span class="op">(...)</span></span></code></pre></div>
+<p>In the first call, the arguments to the <code>COMBINED_CLEAN</code> functor must be the structures of all the hashers to combine. In the second call, the arguments to the <code>create_combined_hashers()</code> function must be all the instances of the hashers in the same order than the structures.</p>
+<h2 id="example">Example</h2>
+<p>For example, let’s combine the <a href="hashers-mtime.html">mtime</a> and the <a href="hashers-sha1.html">sha1</a> hashers to create a new hasher that considers a file dirty if both its SHA1 hash and its modification time have changed.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">P</span>osix_File_System <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.file-systems.posix&quot;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">COMBINED_CLEAN</span> <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.combined-clean&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">S</span>ha1_Hasher <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.sha1&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">M</span>time_Hasher <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.mtime&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">C</span>ombined_Hasher <span class="op">=</span> COMBINED_CLEAN<span class="op">(</span><span class="cn">S</span>ha1_Hasher<span class="op">,</span> <span class="cn">M</span>time_Hasher<span class="op">)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> fs <span class="op">=</span> <span class="cn">P</span>osix_File_System<span class="op">.</span>global<span class="op">()</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> sha1_hasher <span class="op">=</span> <span class="cn">S</span>ha1_Hasher<span class="op">.</span>create<span class="op">(</span>fs<span class="op">)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> mtime_hasher <span class="op">=</span> <span class="cn">M</span>time_Hasher<span class="op">.</span>create<span class="op">(</span>fs<span class="op">)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> combined_hasher <span class="op">=</span> <span class="cn">C</span>ombined_Hasher<span class="op">.</span>create_combined_hashers<span class="op">(</span>sha1_hasher<span class="op">,</span> mtime_hasher<span class="op">)</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Use `combined_hasher` freely</span></span></code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="rebuilders-mtime.html"><code>build.rebuilders.mtime</code></a>.</li>
-<li><a href="rebuilders-dirty-bit.html"><code>build.rebuilders.dirty_bit</code></a>.</li>
-<li><a href="rebuilders-phony-adapter.html"><code>build.rebuilders.phony-adapter</code></a>.</li>
+<li><a href="hashers-mtime.html"><code>build.hashers.mtime</code></a>.</li>
+<li><a href="hashers-sha1.html"><code>build.hashers.sha1</code></a>.</li>
+<li><a href="hashers-apenwarr.html"><code>build.hashers.apenwarr</code></a>.</li>
+<li><a href="hashers-combined-dirty.html"><code>build.hashers.combined-dirty</code></a>.</li>
 </ul>
         </main>
         <footer class="footer">

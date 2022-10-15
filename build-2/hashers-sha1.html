@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="generator" content="pandoc" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-                                        <title>build.rebuilders.verifying-traces</title>
+                                        <title>build.hashers.sha1</title>
         <style>
          code{white-space: pre-wrap;}
          span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@
     </head>
     <body>
                         <header id="title-block-header">
-            <h1 class="title">build.rebuilders.verifying-traces</h1>
+            <h1 class="title">build.hashers.sha1</h1>
                                                         </header>
                 <nav class="navbar">
             <ul class="mainnav">
@@ -108,7 +108,7 @@
                         <nav id="TOC" role="doc-toc" class="toc">
                         <h2 class="toc-title" id="toc-title">Table of contents</h2>
                         <ul>
-                        <li><a href="#build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></a>
+                        <li><a href="#build.hashers.sha1"><code>build.hashers.sha1</code></a>
                         <ul>
                         <li><a href="#usage">Usage</a></li>
                         <li><a href="#see-also">See Also</a></li>
@@ -116,27 +116,27 @@
                         </ul>
         </nav>
                         <main class="main-content">
-<h1 id="build.rebuilders.verifying-traces"><code>build.rebuilders.verifying-traces</code></h1>
+<h1 id="build.hashers.sha1"><code>build.hashers.sha1</code></h1>
 <dl>
 <dt><strong>Special meaning of keys?</strong></dt>
-<dd>No.
-</dd>
-<dt><strong>Requires an specific scheduler?</strong></dt>
-<dd>No.
+<dd>Yes, as file names.
 </dd>
 </dl>
-<p>A verifying-traces rebuilder. A verifying trace contains a <em>hash</em> gotten by a <em>hash function</em> from a key, it’s value and it’s dependencies hashes. Depending on the hash function this rebuilder will have different criteria for the caching.</p>
+<p>This hasher uses the SHA1 hash of a file as it’s VT hash. This way changes to a file that affect it’s modification date but not it’s content will not trigger a rebuild.</p>
+<p>Note that SHA1 hashes, like all hash functions, have a risk of collisions. When this happens the file will not be rebuilt. This is problematic as it is assumed that VT hashers will have false positives but never false negatives and as such not only will a rebuild not be triggered (causing all sorts of issues for your build) but also there is no way to force a rebuild of a key in a store. Because of this, build systems provided by this library always mix this hasher with another one, using the SHA1 hash as a mere “quick exit” (“if the SHA1 hashes are different then we <em>know</em> the file has changed”). Still, if you feel specially lucky, you can use this VT hasher as-is and ignore the possible collisions.</p>
 <h2 id="usage">Usage</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">R</span>ebuilder <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.rebuilders.verifying-traces&quot;</span> <span class="op">(</span><span class="cn">V</span>erifying_Trace_Store<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">H</span>asher <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.sha1&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> hasher <span class="op">=</span> <span class="cn">H</span>asher<span class="op">.</span>create<span class="op">(</span>posix_file_system<span class="op">)</span></span></code></pre></div>
 <ul>
-<li><code>Verifying_Trace_Store</code> is the structure of the verifying traces store to use.</li>
+<li><code>Posix_File_System</code> must be the POSIX file system structure to use.</li>
+<li><code>posix_file_system</code> must be the <code>Posix_File_System</code> instance to use.</li>
 </ul>
-<p>The <code>Rebuilder.create(vt)</code> function (for a given instance of the <code>Verifying_Trace_Store</code> <code>vt</code>) will create and return the new rebuilder.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="rebuilders-mtime.html"><code>build.rebuilders.mtime</code></a>.</li>
-<li><a href="rebuilders-dirty-bit.html"><code>build.rebuilders.dirty_bit</code></a>.</li>
-<li><a href="rebuilders-phony-adapter.html"><code>build.rebuilders.phony-adapter</code></a>.</li>
+<li><a href="hashers-mtime.html"><code>build.hashers.mtime</code></a>.</li>
+<li><a href="hashers-apenwarr.html"><code>build.hashers.apenwarr</code></a>.</li>
+<li><a href="hashers-combined-clean.html"><code>build.hashers.combined-clean</code></a>.</li>
+<li><a href="hashers-combined-dirty.html"><code>build.hashers.combined-dirty</code></a>.</li>
 </ul>
         </main>
         <footer class="footer">

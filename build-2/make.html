@@ -100,7 +100,7 @@
                 <li>Tools:</li>
                 <li><a href="make.html"><code>build.make</code></a></li>
                 <li><a href="#" class="todo-link"><code>build.ninja</code></a></li>
-                <li><a href="redo.html"><code>build.redo</code></a></li>
+                <li><a href="#" class="todo-link"><code>build.redo</code></a></li>
             </ul>
                                 </nav>
                         <nav id="TOC" role="doc-toc" class="toc">
@@ -112,7 +112,6 @@
                         <li><a href="#makefiles">Makefiles</a>
                         <ul>
                         <li><a href="#comments">Comments</a></li>
-                        <li><a href="#continuations">Continuations</a></li>
                         <li><a href="#variables">Variables</a></li>
                         <li><a href="#rules">Rules</a></li>
                         <li><a href="#recipes">Recipes</a></li>
@@ -127,7 +126,7 @@
         </nav>
                         <main class="main-content">
 <h1 id="build.make-the-make-like-clone-of-build.lua"><code>build.make</code> – The make-like clone of <code>build.lua</code></h1>
-<p>The <code>build.lua</code> library comes with a clone of the classic <code>make</code> program called <code>build.make</code>. This program implements a <code>make</code>-like <a href="https://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> that is mostly compatible with a subset of GNU Make.</p>
+<p>The <code>build.lua</code> library comes with a clone of the classic <code>make</code> program called <code>build.make</code>. This program implements a <code>make</code>-like <a href="https://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> that is mostly compatible with a subset of <code>make</code>.</p>
 <h2 id="basic-usage">Basic usage</h2>
 <p>The basic usage is the same than <code>make</code>: just run <code>build.make</code> in a directory that has a <code>Makefile</code>, <code>makefile</code>, <code>BUILDmakefile</code> or <code>BuildMakefile</code> file and it will automatically build your program.</p>
 <p>For example: imagine the following <code>Makefile</code>:</p>
@@ -174,16 +173,6 @@ exe: a.o b.o
 <p>The syntax implemented from make consists of the following:</p>
 <h3 id="comments">Comments</h3>
 <p>Any unquoted <code>#</code> will start a comment that lasts until the end of the line. If the line ends with an odd number of backslashes <code>\</code> then the comment is extended to the next line and so on.</p>
-<h3 id="continuations">Continuations</h3>
-<p>Extending the previous syntax, any line can end with a backslash <code>\</code> and it will be <em>continued</em> into the next. For example, the two programs are equivalent:</p>
-<pre class="make"><code>executable: main.c math.c \
-graphics.c physics.c serde.c
-    cc -o $@ $^</code></pre>
-<pre class="make"><code>executable: main.c math.c graphics.c physics.c serde.c
-    cc -o $@ $^</code></pre>
-<p>You can escape <code>\</code> with other <code>\</code>. There must be whitespace before a <code>\</code> that escapes a newline. So, for example, <code>\\</code> is a literal <code>\</code> and <code>hola\</code> does <strong>not</strong> continue into the next line. Note that, when not preceded by whitespace, <code>\</code> has a escaping behaviour. For example, <code>\\</code> is a literal <code>\</code>, while <code>\#</code> is a literal <code>#</code>. You can escape any of the characters <code>\</code>, <code>#</code>, <code>:</code>, <code>=</code> and <code>|</code> which backslashes. An alternative to backslashes is to put them between quotes (<code>\#</code> and <code>"#"</code> are the same literal).</p>
-<p><em>Note</em>: None of the previous paragraph applies to comments, which only check if they end in an odd number of backslashes regardless for whenever they are preceded by whitespace or not.</p>
-<p>Finally, line continuations cannot appear inside string literals.</p>
 <h3 id="variables">Variables</h3>
 <p>Any of the following forms:</p>
 <pre><code>VAR = ...
@@ -197,15 +186,11 @@ VAR ?= ...</code></pre>
 <li><code>VAR :=</code> and <code>VAR ::=</code> set a variable but expand it’s content right away. This assigment basically has the same semantics than the normal assigment <code>=</code> in other programming languages.</li>
 <li><code>VAR ?=</code> will set <code>VAR</code> only if not already set.</li>
 </ul>
-<p>After defining a variable you can refer to it with the syntax <code>$(VAR)</code>. If the name of the variable is a single character then you can also use <code>$VAR</code>. For example, <code>$(CC)</code> refers to the variable <code>CC</code> while <code>$&lt;</code> refers to the variable <code>&lt;</code>. To escape a <code>$</code> both inside and outside a recipe use <code>$$</code>.</p>
+<p>After defining a variable you can refer to it with the syntax <code>$(VAR)</code>. If the name of the variable is a single character then you can also use <code>$VAR</code>. For example, <code>$(CC)</code> refers to the variable <code>CC</code> while <code>$&lt;</code> refers to the variable <code>&lt;</code>.</p>
 <h3 id="rules">Rules</h3>
 <p>A rule indicates <em>when</em> to build a <em>target</em> (that is, a file that you want to build automatically). Rules look like this:</p>
 <pre><code>TARGET: DEPENDENCIES...</code></pre>
 <p>Where <code>TARGET</code> is a “word” and <code>DEPENDENCIES</code> are zero or more “words”. What this rule means is that <code>TARGET</code> should be rebuilt when any of the <code>DEPENDENCIES</code> changes. For example: the rule <code>a.o: a.c</code> from the previous example says that <code>a.o</code> will be rebuilt once <code>a.c</code> changes; the rule <code>lib.so: a.o b.o c.o</code> says that the file <code>lib.so</code> will be rebuilt if any of <code>a.o</code>, <code>b.c</code> or <code>c.o</code> changes and finally the rule <code>example.txt:</code> says that <code>example.txt</code> will be rebuilt when possible (as it has no dependencies it is considered permanently “out-of-date”/“to-be-rebuilt”).</p>
-<p>If <code>TARGET</code> contains an unescaped <code>%</code> then it is said that this is a <em>pattern rule</em>. Each unescaped <code>%</code> on the dependencies will be replaced by what the <code>%</code> <em>matched</em> on the target. This <code>%</code> acts kind of like a shell glob or a SQL <code>LIKE</code> clause. Unlike a glob, it can match any character. For example, the next rule tells how to build <em>any</em> file in the directory <code>build/</code> that starts with <code>lib</code> and ends with <code>.so</code> by running the C compiler on an equally named (but without the extension nor the <code>lib</code> at the beginning) file on the <code>src/libs/</code> directory:</p>
-<pre class="make"><code>build/lib%.so: src/libs/%.c
-    cc -shared -o $@ $&lt;</code></pre>
-<p>What this rule does is to match an output like <code>build/libfoo.so</code>, gets the part matched by the <code>%</code> (<code>foo</code>) and replaces it into any dependency to get <code>src/libs/foo.c</code>.</p>
 <h3 id="recipes">Recipes</h3>
 <p>Recipes indicate <em>how</em> a target will be rebuilt. All lines after a rule that start with at least one space or tab are considered it’s recipe.</p>
 <p><strong>NOTE</strong>: Unlike other makes out there, <strong>spaces can be used instead of tabs as indentation</strong>.</p>
@@ -235,42 +220,6 @@ example:
 <p>When building <code>example</code>, the echo will actually print <code>*.c</code> rather than all the files that end in <code>.c</code>. This is because other makes work more like a macro templating system while <code>build.make</code> will escape the variables when interpolating using the <a href="https://manpages.debian.org/buster/libstring-shellquote-perl/shell-quote.1p.en.html"><code>shell-quote</code>(1p)</a> program.</p>
 <h3 id="words">Words</h3>
 <p>The autoescaping feature requires me to specify where and how does <code>build.make</code> insert spaces between a variable’s elements. It does this by separating a variable in words. Each word is escaped as a separate shell argument. Like the the <code>sh</code>(1) language, you can concatenate several forms in a single word by leaving no whitespace between them. You can use double-quoted strings, bare words, make escapes (<code>$$</code> to escape a <code>$</code>) and backslash escapes. For example, <code>hola" "mundo que$$"("TAL")"</code> contains 2 words, <code>hola mundo</code> and <code>que$(TAL)</code>.</p>
-<p>All of this happens <em>syntactically</em>. This means that <code>build.make</code> works closer to a common programming language like <a href="https://python.org">Python</a> or <a href="https://lua.org">Lua</a> than it does with text templating engines like other makes or <a href="https://www.gnu.org/software/m4/m4.html">GNU M4</a>.</p>
-<p>Some examples: in the following snippet, the variable <code>FILES</code> contains 3 elements with the values <code>a</code>, <code>b c</code> and <code>d</code>:</p>
-<pre class="make"><code>FILES = a &quot;b c&quot; d</code></pre>
-<p>The next example declares a variable with six elements:</p>
-<pre class="make"><code>C_SRCS = a.c b.c c.c
-LUA_SRCS = a.lua b.lua c.lua
-SRCS = $(C_SRCS) $(LUA_SRCS)</code></pre>
-<p>As a demonstration that this is not text replacement, the following variable, which contains special syntax for <code>sh</code>(1), will nonetheless be escaped correctly:</p>
-<pre class="make"><code>SPECIAL = HOLA=mundo
-
-example:
-    $(SPECIAL)</code></pre>
-<p>Will error out with a <code>HOLA=mundo: not found</code> error, indicating that the <code>HOLA=mundo</code> was processed as a command and not an assigment.</p>
-<p>If you use a variable with multiple values inside a word, the cartesian product of the variable values and the parts after and before it will be produced. For example:</p>
-<pre class="make"><code>A = 1 2 3
-B = a b c
-C = $(A)
-D = $(A) $(B)
-E = $(A)$(B)
-F = file.$(A).txt
-G = data.$(B).txt z$(A).zip</code></pre>
-<p>The variables <code>A</code> and <code>B</code> have 3 elements each. So does <code>C</code>, which has <code>A</code>’s elements. <code>D</code> has the values <code>1 2 3 a b c</code>. Because <code>E</code>’s definition used multi-values variables in the same word, such word gets <em>expanded</em> with the cartesian product to get the values <code>1a 1b 1c 2a 2b 2c 3a 3b 3c</code>. Same with <code>F</code>, which gets <code>file.1.txt file.2.txt file.3.txt</code>. A similar process happens for the 2 words of <code>G</code> for a total of 9 elements.</p>
-<p>This only happens outside of recipes, as <code>build.make</code> cannot know the syntax of the shell in use.</p>
-<p>As a practical example of this, the following makefile will create 2 rules, in which <code>docs.zip</code> depends on all the source files with a <code>.txt</code> extension and <code>src.zip</code> depends on all the source files with a <code>.lua</code> extension:</p>
-<pre class="make"><code>FILES = main utils fs buffer panels io
-SRCS = $(FILES).lua
-DOCS = $(FILES).txt
-
-docs.zip: $(DOCS)
-    zip $@ $^
-
-%.txt: %.lua
-    ... # Generate documentation from a lua file
-
-src.zip: $(SRCS)
-    zip $@ $^</code></pre>
 <h3 id="special-variables">Special variables</h3>
 <p>The following variables are special: they are automatically defined before executing each recipe.</p>
 <ul>

@@ -111,6 +111,7 @@
                         <li><a href="#build.hashers.mtime"><code>build.hashers.mtime</code></a>
                         <ul>
                         <li><a href="#usage">Usage</a></li>
+                        <li><a href="#notes">Notes</a></li>
                         <li><a href="#see-also">See Also</a></li>
                         </ul></li>
                         </ul>
@@ -119,17 +120,20 @@
 <h1 id="build.hashers.mtime"><code>build.hashers.mtime</code></h1>
 <dl>
 <dt><strong>Special meaning of keys?</strong></dt>
-<dd>Yes, as file names.
+<dd>No, but they must have an associated file name.
 </dd>
 </dl>
 <p>This simple hasher will record the modification times of a key and mark it as dirty if it changes.</p>
 <h2 id="usage">Usage</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">H</span>asher <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.mtime&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">)</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">H</span>asher <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.mtime&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">,</span> <span class="cn">F</span>ile_Of_Key<span class="op">)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> hasher <span class="op">=</span> <span class="cn">H</span>asher<span class="op">.</span>create<span class="op">(</span>posix_file_system<span class="op">)</span></span></code></pre></div>
 <ul>
 <li><code>Posix_File_System</code> must be the POSIX file system structure to use.</li>
+<li><code>File_Of_Key</code> must be a function that will be called like <code>File_Of_Key(key)</code>. It must return the filename of the file associated with the key, or <code>nil</code> if the key has no filename.</li>
 <li><code>posix_file_system</code> must be the <code>Posix_File_System</code> instance to use.</li>
 </ul>
+<h2 id="notes">Notes</h2>
+<p>Same note from the <a href="rebuilders-mtime.html"><code>mtime</code> rebuilder</a> about file-less keys applies here.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="hashers-sha1.html"><code>build.hashers.sha1</code></a>.</li>

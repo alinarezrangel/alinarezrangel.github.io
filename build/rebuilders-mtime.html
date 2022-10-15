@@ -111,6 +111,7 @@
                         <li><a href="#build.rebuilders.mtime"><code>build.rebuilders.mtime</code></a>
                         <ul>
                         <li><a href="#usage">Usage</a></li>
+                        <li><a href="#notes">Notes</a></li>
                         <li><a href="#see-also">See Also</a></li>
                         </ul></li>
                         </ul>
@@ -119,7 +120,7 @@
 <h1 id="build.rebuilders.mtime"><code>build.rebuilders.mtime</code></h1>
 <dl>
 <dt><strong>Special meaning of keys?</strong></dt>
-<dd>Yes, as file names.
+<dd>No, but they must have an associated file name.
 </dd>
 <dt><strong>Requires an specific scheduler?</strong></dt>
 <dd>Yes, any scheduler that provides dependency information along with the task. For example, the <a href="schedulers-topological.html">topological scheduler</a>.
@@ -127,15 +128,19 @@
 </dl>
 <p>This simple rebuilder will cache a key only for as long as its modification time (also known as <em>mtime</em>) remains bigger than that of it’s dependencies.</p>
 <h2 id="usage">Usage</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">R</span>ebuilder <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.rebuilders.mtime&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">R</span>ebuilder <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.rebuilders.mtime&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">,</span> <span class="cn">F</span>ile_Of_Key<span class="op">)</span></span></code></pre></div>
 <ul>
 <li><code>Posix_File_System</code> is the structure of the POSIX compatible file system to use.</li>
+<li><code>File_Of_Key</code> must be a function that will be called like <code>File_Of_Key(key)</code>. It must return the filename of the file associated with the key, or <code>nil</code> if the key has no filename.</li>
 </ul>
 <p>The <code>Rebuilder.create(fs)</code> (where <code>fs</code> is the instance of <code>Posix_File_System</code>) will create and return the new rebuilder.</p>
+<h2 id="notes">Notes</h2>
+<p>When checking the timestamps, keys without an associated file will be handled as permanently out of date. This sound wrong but is the only way to keep the invariants of the build system: always rebuilding file-less keys will never leave a key that should have been rebuilt <em>unbuilt</em>.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="rebuilders-verifying-traces.html"><code>build.rebuilders.verifying-traces</code></a>.</li>
 <li><a href="rebuilders-dirty-bit.html"><code>build.rebuilders.dirty_bit</code></a>.</li>
+<li><a href="rebuilders-phony-adapter.html"><code>build.rebuilders.phony-adapter</code></a>.</li>
 </ul>
         </main>
         <footer class="footer">

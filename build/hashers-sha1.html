@@ -111,6 +111,7 @@
                         <li><a href="#build.hashers.sha1"><code>build.hashers.sha1</code></a>
                         <ul>
                         <li><a href="#usage">Usage</a></li>
+                        <li><a href="#notes">Notes</a></li>
                         <li><a href="#see-also">See Also</a></li>
                         </ul></li>
                         </ul>
@@ -119,18 +120,21 @@
 <h1 id="build.hashers.sha1"><code>build.hashers.sha1</code></h1>
 <dl>
 <dt><strong>Special meaning of keys?</strong></dt>
-<dd>Yes, as file names.
+<dd>No, but they must have an associated file name.
 </dd>
 </dl>
 <p>This hasher uses the SHA1 hash of a file as it’s VT hash. This way changes to a file that affect it’s modification date but not it’s content will not trigger a rebuild.</p>
 <p>Note that SHA1 hashes, like all hash functions, have a risk of collisions. When this happens the file will not be rebuilt. This is problematic as it is assumed that VT hashers will have false positives but never false negatives and as such not only will a rebuild not be triggered (causing all sorts of issues for your build) but also there is no way to force a rebuild of a key in a store. Because of this, build systems provided by this library always mix this hasher with another one, using the SHA1 hash as a mere “quick exit” (“if the SHA1 hashes are different then we <em>know</em> the file has changed”). Still, if you feel specially lucky, you can use this VT hasher as-is and ignore the possible collisions.</p>
 <h2 id="usage">Usage</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">H</span>asher <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.sha1&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">)</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="cn">H</span>asher <span class="op">=</span> <span class="fu">require</span> <span class="st">&quot;build.hashers.sha1&quot;</span> <span class="op">(</span><span class="cn">P</span>osix_File_System<span class="op">,</span> <span class="cn">F</span>ile_Of_Key<span class="op">)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> hasher <span class="op">=</span> <span class="cn">H</span>asher<span class="op">.</span>create<span class="op">(</span>posix_file_system<span class="op">)</span></span></code></pre></div>
 <ul>
 <li><code>Posix_File_System</code> must be the POSIX file system structure to use.</li>
+<li><code>File_Of_Key</code> must be a function that will be called like <code>File_Of_Key(key)</code>. It must return the filename of the file associated with the key, or <code>nil</code> if the key has no filename.</li>
 <li><code>posix_file_system</code> must be the <code>Posix_File_System</code> instance to use.</li>
 </ul>
+<h2 id="notes">Notes</h2>
+<p>Same note from the <a href="rebuilders-mtime.html"><code>mtime</code> rebuilder</a> about file-less keys applies here.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="hashers-mtime.html"><code>build.hashers.mtime</code></a>.</li>
